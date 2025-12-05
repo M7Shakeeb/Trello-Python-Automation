@@ -20,12 +20,15 @@ jobs:
       run: mkdir -p test-results
 
 # 4. Run Tests in Docker with Volume Mount
-    - name: Run Tests in Docker
+    - name: Run Tests in Docker with Volume Mount
+      env:
+        TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
+        TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
       run: |
         docker run --rm \
         -v ${{ github.workspace }}/test-results:/app/test-results \
-        -e TRELLO_KEY=${{ secrets.TRELLO_KEY }} \
-        -e TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }} \
+        -e TRELLO_KEY="$TRELLO_KEY" \
+        -e TRELLO_TOKEN="$TRELLO_TOKEN" \
         trello-python-tests \
         pytest --html=test-results/report.html
 
