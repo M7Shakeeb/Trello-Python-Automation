@@ -2,7 +2,6 @@ import requests
 import os
 from dotenv import load_dotenv
 
-# Load env variables once when this module is imported
 load_dotenv()
 
 class TrelloClient:
@@ -15,22 +14,29 @@ class TrelloClient:
 
     def create_board(self, name):
         url = f"{self.base_url}/boards"
-        params = {**self.auth, "name": name}
-        response = requests.post(url, params=params)
-        return response
+        params = {**self.auth, "name": name, "defaultLists": "false"}
+        return requests.post(url, params=params)
 
     def get_board(self, board_id):
         url = f"{self.base_url}/boards/{board_id}"
-        response = requests.get(url, params=self.auth)
-        return response
+        return requests.get(url, params=self.auth)
 
     def delete_board(self, board_id):
         url = f"{self.base_url}/boards/{board_id}"
-        response = requests.delete(url, params=self.auth)
-        return response
+        return requests.delete(url, params=self.auth)
 
     def create_list(self, board_id, name):
         url = f"{self.base_url}/lists"
         params = {**self.auth, "name": name, "idBoard": board_id}
-        response = requests.post(url, params=params)
-        return response
+        return requests.post(url, params=params)
+
+    # --- NEW CARD FUNCTIONS ---
+    def create_card(self, list_id, name):
+        url = f"{self.base_url}/cards"
+        params = {**self.auth, "name": name, "idList": list_id}
+        return requests.post(url, params=params)
+
+    def update_card(self, card_id, list_id):
+        url = f"{self.base_url}/cards/{card_id}"
+        params = {**self.auth, "idList": list_id}
+        return requests.put(url, params=params)
