@@ -26,7 +26,6 @@ jobs:
         -v ${{ github.workspace }}/test-results:/app/test-results \
         -e TRELLO_KEY=${{ secrets.TRELLO_KEY }} \
         -e TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }} \
-        -e BASE_URL=${{ secrets.BASE_URL }} \
         trello-python-tests \
         pytest --html=test-results/report.html
 

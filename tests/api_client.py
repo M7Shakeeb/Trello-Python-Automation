@@ -6,7 +6,7 @@ load_dotenv()
 
 class TrelloClient:
     def __init__(self):
-        self.base_url = os.getenv("BASE_URL")
+        self.base_url = "https://api.trello.com/1"
         self.auth = {
             "key": os.getenv("TRELLO_KEY"),
             "token": os.getenv("TRELLO_TOKEN")
