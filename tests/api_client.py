@@ -14,7 +14,10 @@ class TrelloClient:
 
     def create_board(self, name):
         url = f"{self.base_url}/boards"
-        print(f"DEBUG: Connecting to {url}")  # <--- Added Debug Print
+        # DEBUG: Print first 4 chars of key to verify it exists
+        safe_key = self.auth['key'][:4] if self.auth['key'] else "NONE"
+        print(f"DEBUG: Connecting to {url} with Key: {safe_key}...")
+        
         params = {**self.auth, "name": name, "defaultLists": "false"}
         return requests.post(url, params=params)
 
