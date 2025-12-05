@@ -40,3 +40,7 @@ class TrelloClient:
         url = f"{self.base_url}/cards/{card_id}"
         params = {**self.auth, "idList": list_id}
         return requests.put(url, params=params)
+    
+    def get_card(self, card_id):
+        url = f"{self.base_url}/cards/{card_id}"
+        return requests.get(url, params=self.auth)

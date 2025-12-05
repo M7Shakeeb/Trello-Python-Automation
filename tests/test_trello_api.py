@@ -1,4 +1,5 @@
 from tests.api_client import TrelloClient
+import random
 
 # Happy Path Testing
 
@@ -48,4 +49,30 @@ def test_get_non_existent_board_returns_404(client):
     fake_id = "000000000000000000000000"
     response = client.get_board(fake_id)
     
+    assert response.status_code == 404
+
+# Verifying that Trello performs a Cascading Delete (i.e., when a parent object is deleted, the children die with it).
+
+def test_delete_board_cascades_to_card(client):
+    """
+    Scenario: Create Board -> Add List -> Add Card -> Delete Board -> Check Card
+    Expected: Card should return 404 (Not Found) because parent board is gone.
+    """
+    # 1. Create a dedicated board for this test
+    board_name = f"Negative-Test-Board-{random.randint(100, 999)}"
+    board_resp = client.create_board(board_name)
+    board_id = board_resp.json()["id"]
+    
+    # 2. Add List and Card
+    list_resp = client.create_list(board_id, "Temporary List")
+    list_id = list_resp.json()["id"]
+    
+    card_resp = client.create_card(list_id, "Ghost Card")
+    card_id = card_resp.json()["id"]
+    
+    # 3. Delete the Board
+    client.delete_board(board_id)
+    
+    # 4. Verify the Card is gone
+    response = client.get_card(card_id)
     assert response.status_code == 404
