@@ -14,6 +14,7 @@ class TrelloClient:
 
     def create_board(self, name):
         url = f"{self.base_url}/boards"
+        print(f"DEBUG: Connecting to {url}")  # <--- Added Debug Print
         params = {**self.auth, "name": name, "defaultLists": "false"}
         return requests.post(url, params=params)
 
