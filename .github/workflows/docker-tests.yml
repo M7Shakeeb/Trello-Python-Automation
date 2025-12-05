@@ -1,0 +1,39 @@
+name: Dockerized Python Tests
+
+on: [push, pull_request]
+
+jobs:
+  docker-test-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Get the code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # 2. Build the Docker Image
+    - name: Build Docker Image
+      run: docker build -t trello-python-tests .
+
+    # 3. Create a folder for results
+    - name: Create Test Results Folder
+      run: mkdir -p test-results
+
+# 4. Run Tests in Docker with Volume Mount
+    - name: Run Tests in Docker
+      run: |
+        docker run --rm \
+        -v ${{ github.workspace }}/test-results:/app/test-results \
+        -e TRELLO_KEY=${{ secrets.TRELLO_KEY }} \
+        -e TRELLO_TOKEN=${{ secrets.TRELLO_TOKEN }} \
+        -e BASE_URL=${{ secrets.BASE_URL }} \
+        trello-python-tests \
+        pytest --html=test-results/report.html
+
+    # 5. Upload the Report as an Artifact
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Docker-Test-Report
+        path: test-results/report.html
