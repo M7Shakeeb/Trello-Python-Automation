@@ -27,6 +27,17 @@ jobs:
         TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
         TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
 
+    - name: Verify Secrets
+      run: |
+          if [ -z "${{ secrets.TRELLO_KEY }}" ]; then
+            echo "::error::TRELLO_KEY is missing or empty!"
+            exit 1
+          fi
+          if [ -z "${{ secrets.TRELLO_TOKEN }}" ]; then
+            echo "::error::TRELLO_TOKEN is missing or empty!"
+            exit 1
+          fi
+          echo "✅ Secrets are present."
 
 # 4. Run Tests in Docker with Volume Mount
     - name: Run Tests in Docker with Volume Mount
