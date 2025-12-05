@@ -19,11 +19,17 @@ jobs:
     - name: Create Test Results Folder
       run: mkdir -p test-results
 
-# 4. Run Tests in Docker with Volume Mount
-    - name: Run Tests in Docker with Volume Mount
+    - name: Confirm secrets set on runner
+      run: |
+       echo "TRELLO_KEY present? $( [ -n "$TRELLO_KEY" ] && echo YES || echo NO )"
+       echo "TRELLO_TOKEN present? $( [ -n "$TRELLO_TOKEN" ] && echo YES || echo NO )"
       env:
         TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
         TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+
+
+# 4. Run Tests in Docker with Volume Mount
+    - name: Run Tests in Docker with Volume Mount
       run: |
         docker run --rm \
         -v ${{ github.workspace }}/test-results:/app/test-results \
