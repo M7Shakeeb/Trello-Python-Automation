@@ -1,45 +1,132 @@
-# 🐍 Trello API Automation (Python Framework)
+🐍 Trello API Automation Framework
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-Framework-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+[![Dockerized Python Tests](https://github.com/M7Shakeeb/Trello-Python-Automation/actions/workflows/docker-tests.yml/badge.svg)](https://github.com/M7Shakeeb/Trello-Python-Automation/actions/workflows/docker-tests.yml)
 
-## 📄 Project Overview
-This project demonstrates a **modular, scalable API automation framework** built from scratch using Python.
+📄 Project Overview
 
-Unlike standard linear scripting, this framework utilizes the **Client-Test Separation pattern** (similar to Page Object Model) to decouple the HTTP request logic from the test assertions. This ensures high maintainability and reusability.
+This repository contains an automated test framework for the Trello REST API, built with Python and Pytest.
 
-## 🛠️ Tech Stack
-* **Language:** Python
-* **HTTP Client:** `requests` library
-* **Test Runner:** `pytest`
-* **Security:** `python-dotenv` for environment variable management
+The primary objective of this project is to demonstrate a scalable, modular approach to API testing. It moves beyond linear scripting by implementing the Page Object Model (POM) pattern, separating the HTTP request logic from test execution. The suite is containerized with Docker to ensure consistent execution across different environments.
 
-## 📂 Architecture
-* **`tests/api_client.py`:** A reusable class that encapsulates all Trello API endpoints. It handles authentication and base URLs automatically.
-* **`tests/test_trello_api.py`:** The actual test suite using Pytest fixtures for Setup (Create Board) and Teardown (Delete Board).
+🛠️ Architecture & Design Decisions
 
-## 🧪 Scenarios Covered
-1.  **Lifecycle Management:** Automatic Board creation and cleanup via Pytest Fixtures.
-2.  **CRUD Operations:** Creating Lists, Creating Cards, Moving Cards.
-3.  **Negative Testing:** Validating error handling for Invalid Auth (401) and Invalid IDs (404).
+The framework is engineered to address common challenges in test automation through the following design choices:
 
-## 🚀 How to Run
-1.  **Clone the repo:**
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/Trello-Python-Automation.git](https://github.com/YOUR_USERNAME/Trello-Python-Automation.git)
-    ```
-2.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  **Configure Secrets:**
-    Create a `.env` file in the root directory:
-    ```ini
-    TRELLO_KEY=your_key
-    TRELLO_TOKEN=your_token
-    BASE_URL=[https://api.trello.com/1](https://api.trello.com/1)
-    ```
-4.  **Run Tests:**
-    ```bash
-    pytest
-    ```
+Client-Test Separation: All API interaction logic is encapsulated in tests/api_client.py. The test files (tests/test_trello_api.py) focus solely on assertions and business logic. This decoupling ensures that API changes only require updates in one location.
+
+State Management via Fixtures: Pytest fixtures (tests/conftest.py) handle the setup and teardown of test data. Every test run creates a fresh, isolated Board and guarantees its deletion after execution, preventing data pollution.
+
+Containerization: A Dockerfile is included to standardize the runtime environment (Python 3.10). This eliminates dependency conflicts and ensures the tests run identically on a local developer machine and the CI server.
+
+Visual Reporting: Integrated pytest-html to generate standalone HTML reports for test result analysis.
+
+⚙️ Test Scenarios Covered
+
+🟢 Happy Path (CRUD Operations)
+
+Lifecycle Management: Automatic Board creation and deletion via Fixtures.
+
+Workflow Validation: Creates "To-Do" & "Done" lists, adds a Card, and moves it between lists to verify status updates.
+
+🔴 Negative & Edge Cases
+
+Security: Verifies that requests with Invalid Auth Tokens return 401 Unauthorized.
+
+Invalid Resources: Verifies that requests for non-existent IDs (e.g., malformed or zeroed IDs) return 404 Not Found.
+
+Data Integrity: Verifies that deleting a Board triggers a Cascading Delete, confirming that all child resources (Cards/Lists) are removed from the database.
+
+🤖 CI/CD Pipeline
+
+A GitHub Actions workflow (docker-tests.yml) is configured to trigger on every push to the main branch. The pipeline performs the following steps:
+
+Builds the custom Docker Image.
+
+Injects secure credentials via GitHub Secrets.
+
+Executes the full regression suite inside the container.
+
+Uploads the generated HTML report as a build artifact.
+
+🚀 How to Run Locally
+
+Prerequisites
+
+Python 3.10+
+
+Docker (Optional, for containerized run)
+
+A Trello Account (Key & Token)
+
+Option 1: Direct Python Execution
+
+Useful for rapid development and debugging.
+
+Clone the Repository:
+
+git clone https://github.com/M7Shakeeb/Trello-Python-Automation.git
+cd Trello-Python-Automation
+
+
+Setup Virtual Environment:
+
+python -m venv venv
+.\venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Mac/Linux
+
+
+Install Dependencies:
+
+pip install -r requirements.txt
+
+
+Configure Secrets:
+Create a .env file in the root directory:
+
+TRELLO_KEY=your_key_here
+TRELLO_TOKEN=your_token_here
+
+
+Run Tests:
+
+pytest --html=report.html
+
+
+Option 2: Docker Execution (Recommended)
+
+Ensures the environment matches the CI server exactly.
+
+Build the Image:
+
+docker build -t trello-python-tests .
+
+
+Run the Container:
+(This command automatically injects your local .env variables into the container).
+
+docker run --rm --env-file .env trello-python-tests
+
+
+📂 Project Structure
+
+Trello-Python-Automation/
+├── .github/workflows/    # CI/CD Pipeline Definitions
+├── tests/
+│   ├── api_client.py     # API Abstraction Class (POM)
+│   ├── conftest.py       # Shared Pytest Fixtures
+│   └── test_trello_api.py # Test Suite
+├── .dockerignore         # Build context optimization
+├── Dockerfile            # Container definition
+├── pytest.ini            # Test runner configuration
+├── requirements.txt      # Python dependencies
+└── README.md             # Documentation
+
+
+👨‍💻 Author
+
+Shakeeb Mohammed
+
+QA Automation Engineer | SDET
