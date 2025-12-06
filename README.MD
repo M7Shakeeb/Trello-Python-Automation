@@ -54,7 +54,7 @@ Useful for rapid development and debugging.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/M7Shakeeb/Trello-Python-Automation.git](https://github.com/M7Shakeeb/Trello-Python-Automation.git)
+    git clone https://github.com/M7Shakeeb/Trello-Python-Automation.git
     cd Trello-Python-Automation
     ```
 2.  **Setup Virtual Environment:**
