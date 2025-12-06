@@ -7,40 +7,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Get the code
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # 2. Build the Docker Image
     - name: Build Docker Image
       run: docker build -t trello-python-tests .
 
-    # 3. Create a folder for results
     - name: Create Test Results Folder
       run: mkdir -p test-results
 
-    - name: Confirm secrets set on runner
-      run: |
-       echo "TRELLO_KEY present? $( [ -n "$TRELLO_KEY" ] && echo YES || echo NO )"
-       echo "TRELLO_TOKEN present? $( [ -n "$TRELLO_TOKEN" ] && echo YES || echo NO )"
+    # Run Tests in Docker with Volume Mount
+    - name: Run Tests in Docker with Volume Mount
+      # FIX: We must define the env variables FOR THIS STEP explicitly
       env:
         TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
         TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
-
-    - name: Verify Secrets
-      run: |
-          if [ -z "${{ secrets.TRELLO_KEY }}" ]; then
-            echo "::error::TRELLO_KEY is missing or empty!"
-            exit 1
-          fi
-          if [ -z "${{ secrets.TRELLO_TOKEN }}" ]; then
-            echo "::error::TRELLO_TOKEN is missing or empty!"
-            exit 1
-          fi
-          echo "✅ Secrets are present."
-
-# 4. Run Tests in Docker with Volume Mount
-    - name: Run Tests in Docker with Volume Mount
       run: |
         docker run --rm \
         -v ${{ github.workspace }}/test-results:/app/test-results \
@@ -49,7 +30,7 @@ jobs:
         trello-python-tests \
         pytest --html=test-results/report.html
 
-    # 5. Upload the Report as an Artifact
+    # Upload the Report as an Artifact
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
       if: always()
