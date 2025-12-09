@@ -12,7 +12,7 @@ It simulates a realistic user journey: creating a board, managing lists, moving 
 ## Tech Stack
 * **Core:** Python (3.10+)
 * **Framework:** Pytest
-* **Containerization:** Docker
+* **Containerization:** Docker 
 * **Reporting:** pytest-html
 
 ## Architecture & Design Decisions
